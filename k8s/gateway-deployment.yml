@@ -1,0 +1,43 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: gateway-deployment
+spec:
+  selector:
+    matchLabels:
+      app: gateway
+  template:
+    metadata:
+      labels:
+        app: gateway
+    spec:
+      containers:
+      - name: gateway
+        env:
+          - name: EUREKA_CLIENT_SERVICEURL_DEFAULTZONE
+            valueFrom:
+              configMapKeyRef:
+                name: auth-env
+                key: EUREKA_CLIENT_SERVICEURL_DEFAULTZONE
+          - name: SPRING_CONFIG_IMPORT
+            valueFrom:
+              configMapKeyRef:
+                name: auth-env
+                key: SPRING_CONFIG_IMPORT
+          - name: SPRING_PROFILES_ACTIVE
+            valueFrom:
+              configMapKeyRef:
+                name: auth-env
+                key: SPRING_PROFILES_ACTIVE
+          - name: SPRING_ZIPKIN_BASEURL
+            valueFrom:
+              configMapKeyRef:
+                name: auth-env
+                key: SPRING_ZIPKIN_BASEURL
+        image: 0811198720119005/gateway
+        resources:
+          limits:
+            memory: "256Mi"
+            cpu: "500m"
+        ports:
+        - containerPort: 8072
